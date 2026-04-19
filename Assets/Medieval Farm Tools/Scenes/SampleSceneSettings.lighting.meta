@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 25ebd2d3b6ffe47499518fd9811f2e5d
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 4890085278179872738
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 179263
+  packageName: Medieval Farm Tools
+  packageVersion: 1.1
+  assetPath: Assets/Medieval Farm Tools/Scenes/SampleSceneSettings.lighting
+  uploadId: 472275
