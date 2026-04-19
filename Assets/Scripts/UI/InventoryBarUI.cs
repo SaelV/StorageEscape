@@ -49,10 +49,10 @@ namespace StorageEscape.UI
                 {
                     continue;
                 }
-
+                InventoryItemDefinition def = null;
                 bool hasData = inventory != null
                     && i < max
-                    && inventory.TryGetSlot(i, out InventoryItemDefinition def)
+                    && inventory.TryGetSlot(i, out def)
                     && def != null;
 
                 if (hasData)
