@@ -12,10 +12,24 @@ namespace StorageEscape.Inventory
         order = 0)]
     public class InventoryItemDefinition : ScriptableObject
     {
+        [SerializeField] private InventoryItemId id = InventoryItemId.undefined;
         [SerializeField] private string displayName = "Objeto";
         [SerializeField] private Sprite icon;
+        [Tooltip("Opcional: modelo en primera persona cuando esta ranura está seleccionada (1–9).")]
+        [SerializeField] private GameObject heldViewPrefab;
 
+        public InventoryItemId Id => id;
         public string DisplayName => displayName;
         public Sprite Icon => icon;
+        public GameObject HeldViewPrefab => heldViewPrefab;
+    }
+    public enum InventoryItemId {
+        undefined,
+        key_blue,
+        key_red,
+        key_green,
+        key_cyan,
+        key_purple,
+        projector_bulb,
     }
 }

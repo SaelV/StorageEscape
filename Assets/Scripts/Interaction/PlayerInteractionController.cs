@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -14,6 +15,7 @@ namespace StorageEscape.Interaction
         [SerializeField] private LayerMask raycastMask = ~0;
         [SerializeField] private Key interactKey = Key.E;
         [SerializeField] private QueryTriggerInteraction triggerInteraction = QueryTriggerInteraction.Collide;
+        [SerializeField] private TextMeshProUGUI prompText;
 
         public IInteractable CurrentTarget { get; private set; }
 
@@ -29,6 +31,7 @@ namespace StorageEscape.Interaction
         private void Update()
         {
             RefreshTarget();
+            UpdatePromptUI();
 
             if (CurrentTarget == null)
             {
@@ -71,6 +74,35 @@ namespace StorageEscape.Interaction
 
             IInteractable interactable = hit.collider.GetComponentInParent<IInteractable>();
             CurrentTarget = interactable;
+        }
+
+        private void UpdatePromptUI()
+        {
+            if (prompText == null)
+            {
+                return;
+            }
+
+            GameObject promptRoot = prompText.gameObject;
+            bool shouldShow =
+                CurrentTarget != null && CurrentTarget.CanInteract(gameObject);
+
+            if (!shouldShow)
+            {
+                if (promptRoot.activeSelf)
+                {
+                    promptRoot.SetActive(false);
+                }
+
+                return;
+            }
+
+            if (!promptRoot.activeSelf)
+            {
+                promptRoot.SetActive(true);
+            }
+
+            prompText.text = CurrentTarget.InteractionPrompt ?? string.Empty;
         }
 
 #if UNITY_EDITOR

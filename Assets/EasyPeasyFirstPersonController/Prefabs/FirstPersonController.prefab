@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 9156347143994207885}
   - component: {fileID: 9156347143994207883}
   - component: {fileID: 9156347143994207884}
-  - component: {fileID: 6535938226138580134}
+  - component: {fileID: 2427684991447369117}
   m_Layer: 2
   m_Name: Camera
   m_TagString: MainCamera
@@ -65,7 +65,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
+  near clip plane: 0.1
   far clip plane: 1000
   field of view: 26.991467
   orthographic: 0
@@ -93,7 +93,7 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9156347143994207886}
   m_Enabled: 1
---- !u!114 &6535938226138580134
+--- !u!114 &2427684991447369117
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -149,6 +149,8 @@ GameObject:
   - component: {fileID: 9156347144040445545}
   - component: {fileID: 9156347144040445544}
   - component: {fileID: 825849739443659256}
+  - component: {fileID: 4116802886779602871}
+  - component: {fileID: 7246144887168824454}
   m_Layer: 2
   m_Name: FirstPersonController
   m_TagString: Untagged
@@ -214,11 +216,11 @@ MonoBehaviour:
   walkSpeed: 3
   sprintSpeed: 5
   crouchSpeed: 1.5
-  jumpSpeed: 4
+  jumpSpeed: 0
   gravity: 9.81
   slideDuration: 0.7
   slideSpeed: 6
-  mouseSensitivity: 2
+  mouseSensitivity: 0.5
   strafeTiltAmount: 2
   playerCamera: {fileID: 9156347143994207885}
   cameraParent: {fileID: 9156347144824098802}
@@ -275,6 +277,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 245deb3b698c6de4d80fdc6bcd905053, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &4116802886779602871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9156347144040445547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad9836849bbdd144ca9de242e8bc4fe6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StorageEscape.Interaction.PlayerInteractionController
+  viewTransform: {fileID: 9156347143994207885}
+  maxDistance: 1
+  raycastMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  interactKey: 19
+  triggerInteraction: 2
+  prompText: {fileID: 0}
+--- !u!114 &7246144887168824454
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9156347144040445547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40ae279a658a8d84e8287aa3ddcb41eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StorageEscape.Inventory.PlayerInventory
+  maxSlots: 8
+  useDigitKeysForHotbar: 1
 --- !u!1 &9156347144365898844
 GameObject:
   m_ObjectHideFlags: 0
