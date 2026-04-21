@@ -37,7 +37,7 @@ namespace StorageEscape.Interaction
             return phase switch
             {
                 Phase.AwaitingFirst => true,
-                Phase.AwaitingSecond => InteractorHasProjectorBulb(interactor),
+                Phase.AwaitingSecond => InteractorIsHoldingProjectorBulb(interactor),
                 _ => false,
             };
         }
@@ -59,12 +59,12 @@ namespace StorageEscape.Interaction
                 case Phase.AwaitingSecond:
                     {
                         PlayerInventory inventory = FindInventory(interactor);
-                        if (inventory == null || !inventory.HasItem(InventoryItemId.projector_bulb))
+                        if (inventory == null || !InteractorIsHoldingProjectorBulb(interactor))
                         {
                             break;
                         }
 
-                        if (!inventory.TryRemoveFirstWithItemId(InventoryItemId.projector_bulb))
+                        if (!inventory.TryConsumeHeldItem(InventoryItemId.projector_bulb))
                         {
                             break;
                         }
@@ -81,7 +81,7 @@ namespace StorageEscape.Interaction
             }
         }
 
-        private static bool InteractorHasProjectorBulb(GameObject interactor)
+        private static bool InteractorIsHoldingProjectorBulb(GameObject interactor)
         {
             if (interactor == null)
             {
@@ -89,7 +89,9 @@ namespace StorageEscape.Interaction
             }
 
             PlayerInventory inventory = FindInventory(interactor);
-            return inventory != null && inventory.HasItem(InventoryItemId.projector_bulb);
+            return inventory != null
+                && inventory.HeldItem != null
+                && inventory.HeldItem.Id == InventoryItemId.projector_bulb;
         }
 
         private static PlayerInventory FindInventory(GameObject interactor)

@@ -57,6 +57,7 @@ namespace StorageEscape.Inventory
         private void Awake()
         {
             EnsureInitialized();
+            EnsureDefaultSelection();
         }
 
         private void OnValidate()
@@ -219,6 +220,34 @@ namespace StorageEscape.Inventory
             return false;
         }
 
+        /// <summary>
+        /// Consume el item actualmente seleccionado solo si coincide con <paramref name="itemId"/>.
+        /// </summary>
+        public bool TryConsumeHeldItem(InventoryItemId itemId)
+        {
+            if (itemId == InventoryItemId.undefined)
+            {
+                return false;
+            }
+
+            EnsureInitialized();
+            if (selectedSlotIndex < 0 || selectedSlotIndex >= slots.Length)
+            {
+                return false;
+            }
+
+            InventoryItemDefinition selectedDefinition = slots[selectedSlotIndex];
+            if (selectedDefinition == null || selectedDefinition.Id != itemId)
+            {
+                return false;
+            }
+
+            slots[selectedSlotIndex] = null;
+            InventoryChanged?.Invoke();
+            SelectedSlotChanged?.Invoke();
+            return true;
+        }
+
         private int FindEmptySlotIndex()
         {
             for (int i = 0; i < slots.Length; i++)
@@ -243,6 +272,19 @@ namespace StorageEscape.Inventory
             if (selectedSlotIndex >= slots.Length)
             {
                 selectedSlotIndex = -1;
+            }
+        }
+
+        private void EnsureDefaultSelection()
+        {
+            if (slots == null || slots.Length == 0)
+            {
+                return;
+            }
+
+            if (selectedSlotIndex < 0)
+            {
+                selectedSlotIndex = 0;
             }
         }
     }

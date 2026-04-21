@@ -1,25 +1,27 @@
 using StorageEscape.Inventory;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace StorageEscape.UI
 {
     /// <summary>
     /// Barra horizontal de ranuras que refleja el <see cref="PlayerInventory"/> asignado.
-    /// Asigna un array de <see cref="Image"/> (icono) en el mismo orden que las ranuras del inventario.
-    /// Opcional: <see cref="slotSelectionMarkers"/> (un hijo por ranura) para resaltar la tecla 1–9 activa.
+    /// Asigna un array de <see cref="InventorySlotUI"/> en el mismo orden que las ranuras del inventario.
+    /// Cada elemento representa un slot disponible del inventario.
     /// </summary>
     public class InventoryBarUI : MonoBehaviour
     {
         [SerializeField] private PlayerInventory inventory;
-        [SerializeField] private Image[] slotIcons;
-        [Tooltip("Mismo orden que ranuras; se activa solo el de la ranura seleccionada.")]
-        [SerializeField] private GameObject[] slotSelectionMarkers;
-        [SerializeField] private Color emptySlotColor = new Color(1f, 1f, 1f, 0.2f);
-        [SerializeField] private Color filledSlotColor = Color.white;
+        [SerializeField] private InventorySlotUI[] slotElements;
+
+        private void Awake()
+        {
+            InitializeSlots();
+        }
 
         private void OnEnable()
         {
+            InitializeSlots();
+
             if (inventory != null)
             {
                 inventory.InventoryChanged += Refresh;
@@ -38,9 +40,30 @@ namespace StorageEscape.UI
             }
         }
 
+        private void InitializeSlots()
+        {
+            if (slotElements == null || slotElements.Length == 0)
+            {
+                return;
+            }
+
+            for (int i = 0; i < slotElements.Length; i++)
+            {
+                InventorySlotUI slotElement = slotElements[i];
+                if (slotElement == null)
+                {
+                    continue;
+                }
+
+                int slotNumber = i + 1;
+                slotElement.SetSlot(slotNumber, null, false);
+                slotElement.Clear();
+            }
+        }
+
         private void Refresh()
         {
-            if (slotIcons == null || slotIcons.Length == 0)
+            if (slotElements == null || slotElements.Length == 0)
             {
                 return;
             }
@@ -48,52 +71,24 @@ namespace StorageEscape.UI
             int max = inventory != null ? inventory.MaxSlots : 0;
             int selected = inventory != null ? inventory.SelectedSlotIndex : -1;
 
-            UpdateSelectionMarkers(selected);
-
-            for (int i = 0; i < slotIcons.Length; i++)
+            for (int i = 0; i < slotElements.Length; i++)
             {
-                Image icon = slotIcons[i];
-                if (icon == null)
+                InventorySlotUI slotElement = slotElements[i];
+                if (slotElement == null)
                 {
                     continue;
                 }
+
                 InventoryItemDefinition def = null;
                 bool hasData = inventory != null
                     && i < max
                     && inventory.TryGetSlot(i, out def)
                     && def != null;
 
-                if (hasData)
-                {
-                    icon.sprite = def.Icon;
-                    icon.color = filledSlotColor;
-                    icon.enabled = def.Icon != null;
-                }
-                else
-                {
-                    icon.sprite = null;
-                    icon.color = emptySlotColor;
-                    icon.enabled = true;
-                }
-            }
-        }
-
-        private void UpdateSelectionMarkers(int selectedSlotIndex)
-        {
-            if (slotSelectionMarkers == null || slotSelectionMarkers.Length == 0)
-            {
-                return;
-            }
-
-            for (int i = 0; i < slotSelectionMarkers.Length; i++)
-            {
-                GameObject marker = slotSelectionMarkers[i];
-                if (marker == null)
-                {
-                    continue;
-                }
-
-                marker.SetActive(selectedSlotIndex >= 0 && i == selectedSlotIndex);
+                int slotNumber = i + 1;
+                Sprite icon = hasData ? def.Icon : null;
+                bool isSelected = selected >= 0 && i == selected;
+                slotElement.SetSlot(slotNumber, icon, isSelected);
             }
         }
     }
