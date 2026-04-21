@@ -6,6 +6,7 @@ namespace StorageEscape.Interaction
     /// <summary>
     /// Al interactuar mueve un objeto hasta la pose de <see cref="openTarget"/>; la siguiente interacción vuelve a la pose cerrada.
     /// Pensado para cajones, puertas u objetos que basculan o se desplazan.
+    /// Opcionalmente puede activar un <see cref="GameObject"/> al abrir y desactivarlo al cerrar.
     /// </summary>
     public class InteractableToggleMove : MonoBehaviour, IInteractable
     {
@@ -24,6 +25,10 @@ namespace StorageEscape.Interaction
         [Header("Texto UI")]
         [SerializeField] private string promptWhenClosed = "Abrir";
         [SerializeField] private string promptWhenOpen = "Cerrar";
+
+        [Header("Opcional")]
+        [Tooltip("Se activa al empezar a abrir y se desactiva al empezar a cerrar.")]
+        [SerializeField] private GameObject activeWhenOpening;
 
         private Vector3 closedWorldPosition;
         private Quaternion closedWorldRotation;
@@ -55,6 +60,8 @@ namespace StorageEscape.Interaction
             {
                 isAtOpenPose = true;
             }
+
+            SetLinkedObjectForTransition(isAtOpenPose);
         }
 
         public string InteractionPrompt => isAtOpenPose ? promptWhenOpen : promptWhenClosed;
@@ -70,6 +77,7 @@ namespace StorageEscape.Interaction
 
             if (moveDurationSeconds <= 0f)
             {
+                SetLinkedObjectForTransition(!isAtOpenPose);
                 ApplyPoseInstant(isAtOpenPose ? closedWorldPosition : openTarget.position, isAtOpenPose ? closedWorldRotation : openTarget.rotation);
                 isAtOpenPose = !isAtOpenPose;
                 return;
@@ -81,6 +89,8 @@ namespace StorageEscape.Interaction
         private IEnumerator MoveRoutine()
         {
             isMoving = true;
+
+            SetLinkedObjectForTransition(!isAtOpenPose);
 
             Vector3 fromPos = objectToMove.position;
             Quaternion fromRot = objectToMove.rotation;
@@ -109,6 +119,16 @@ namespace StorageEscape.Interaction
         private void ApplyPoseInstant(Vector3 worldPosition, Quaternion worldRotation)
         {
             objectToMove.SetPositionAndRotation(worldPosition, worldRotation);
+        }
+
+        private void SetLinkedObjectForTransition(bool movingToOpen)
+        {
+            if (activeWhenOpening == null)
+            {
+                return;
+            }
+
+            activeWhenOpening.SetActive(movingToOpen);
         }
 
         private static bool PoseMatches(Vector3 aPos, Quaternion aRot, Vector3 bPos, Quaternion bRot)

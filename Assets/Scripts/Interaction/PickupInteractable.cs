@@ -16,14 +16,12 @@ namespace StorageEscape.Interaction
 
         public bool CanInteract(GameObject interactor)
         {
-            Debug.Log($"[PickupInteractable] Inventario encontrado en '{interactor.name}': ]", this);
             if (interactor == null || item == null)
             {
                 return false;
             }
 
             PlayerInventory inventory = FindInventory(interactor);
-            Debug.Log($"[PickupInteractable] Inventario encontrado en '{interactor.name}': {inventory != null}", this);
             return inventory != null && inventory.CanAdd(item);
         }
 
@@ -45,7 +43,6 @@ namespace StorageEscape.Interaction
 
             if (!inventory.TryAdd(item))
             {
-                Debug.Log($"[PickupInteractable] Inventario lleno: no se pudo recoger '{item.DisplayName}'.", this);
                 return;
             }
 

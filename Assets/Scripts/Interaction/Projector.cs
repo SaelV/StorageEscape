@@ -1,13 +1,16 @@
+using System;
 using System.Collections;
 using StorageEscape.Inventory;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace StorageEscape.Interaction
 {
     /// <summary>
     /// Primera interacción: activa el objetivo durante un tiempo breve y luego lo apaga.
-    /// Segunda interacción: solo si el jugador tiene <see cref="InventoryItemId.projector_bulb"/>;
-    /// consume el ítem, deja el objetivo activo y deshabilita más interacciones.
+    /// Fase de reparación: el jugador entrega bombilla y cinta en interacciones separadas.
+    /// Tras reparar: la llave azul aparece en cuanto están las dos piezas; la primera interacción
+    /// enciende el objetivo; la segunda lo deja encendido y pasa a completado (sin más interacciones).
     /// </summary>
     public class Projector : MonoBehaviour, IInteractable
     {
@@ -16,28 +19,110 @@ namespace StorageEscape.Interaction
             AwaitingFirst,
             PulsingFirst,
             AwaitingSecond,
+            AwaitingPostRepairFirstInteract,
+            AwaitingPostRepairSecondInteract,
             Completed
         }
 
-        [SerializeField] private string interactionPrompt = "Interactuar";
+        [FormerlySerializedAs("interactionPrompt")]
+        [SerializeField] private string promptEncender = "Encender";
+        [SerializeField] private string promptPlaceBulb = "Poner bombilla";
+        [SerializeField] private string promptPlaceTape = "Poner cinta";
+
         [SerializeField] private GameObject target;
         [SerializeField] private float firstPulseDurationSeconds = 0.2f;
         [SerializeField] private GameObject blueKey;
+        [SerializeField] private GameObject tapeRecorder;
+        [SerializeField] private Collider tapeRecorderCollider;
+
+        [Tooltip("Opcional. Si está vacío, se usa el primer PlayerInventory de la escena (un jugador).")]
+        [SerializeField] private PlayerInventory playerInventory;
 
         private Phase phase = Phase.AwaitingFirst;
+        private PlayerInventory cachedAutoResolvedInventory;
+        private bool bulbDelivered;
+        private bool tapeDelivered;
 
-        public string InteractionPrompt => interactionPrompt;
+        public bool BulbDelivered => bulbDelivered;
+        public bool TapeDelivered => tapeDelivered;
+        public bool IsAwaitingRepairParts => phase == Phase.AwaitingSecond;
+
+        public string InteractionPrompt
+        {
+            get
+            {
+                switch (phase)
+                {
+                    case Phase.AwaitingFirst:
+                    case Phase.AwaitingPostRepairFirstInteract:
+                        return promptEncender;
+                    case Phase.AwaitingPostRepairSecondInteract:
+                        return string.Empty;
+                    case Phase.AwaitingSecond:
+                        return BuildRepairPromptFromInventory(ResolvePlayerInventory());
+                    default:
+                        return string.Empty;
+                }
+            }
+        }
+
         private void Awake()
         {
-            blueKey.SetActive(false);
-            target.SetActive(false);
+            if (blueKey != null)
+            {
+                blueKey.SetActive(false);
+            }
+
+            if (target != null)
+            {
+                target.SetActive(false);
+            }
         }
+
+        private PlayerInventory ResolvePlayerInventory()
+        {
+            if (playerInventory != null)
+            {
+                return playerInventory;
+            }
+
+            if (cachedAutoResolvedInventory == null)
+            {
+                cachedAutoResolvedInventory = FindFirstObjectByType<PlayerInventory>();
+            }
+
+            return cachedAutoResolvedInventory;
+        }
+
+        private string BuildRepairPromptFromInventory(PlayerInventory inventory)
+        {
+            if (inventory?.HeldItem == null)
+            {
+                return string.Empty;
+            }
+
+            InventoryItemId held = inventory.HeldItem.Id;
+            if (!bulbDelivered && held == InventoryItemId.projector_bulb)
+            {
+                return promptPlaceBulb;
+            }
+
+            if (!tapeDelivered && held == InventoryItemId.record_tape)
+            {
+                return promptPlaceTape;
+            }
+
+            return string.Empty;
+        }
+
         public bool CanInteract(GameObject interactor)
         {
             return phase switch
             {
                 Phase.AwaitingFirst => true,
-                Phase.AwaitingSecond => InteractorIsHoldingProjectorBulb(interactor),
+                Phase.AwaitingSecond => CanDeliverNextHeldRepairPart(interactor),
+                Phase.AwaitingPostRepairFirstInteract => true,
+                Phase.AwaitingPostRepairSecondInteract => true,
                 _ => false,
             };
         }
@@ -59,29 +144,49 @@ namespace StorageEscape.Interaction
                 case Phase.AwaitingSecond:
                     {
                         PlayerInventory inventory = FindInventory(interactor);
-                        if (inventory == null || !InteractorIsHoldingProjectorBulb(interactor))
+                        if (inventory == null || !TryConsumeNextRepairPart(inventory))
                         {
                             break;
                         }
 
-                        if (!inventory.TryConsumeHeldItem(InventoryItemId.projector_bulb))
+                        if (bulbDelivered && tapeDelivered)
                         {
-                            break;
+                            RevealBlueKey();
+
+                            if (target != null)
+                            {
+                                target.SetActive(false);
+                            }
+
+                            phase = Phase.AwaitingPostRepairFirstInteract;
                         }
 
-                        if (target != null)
-                        {
-                            target.SetActive(true);
-                            blueKey.SetActive(true);
-                        }
-
-                        phase = Phase.Completed;
                         break;
                     }
+
+                case Phase.AwaitingPostRepairFirstInteract:
+                    if (target != null)
+                    {
+                        target.SetActive(true);
+                    }
+
+                    phase = Phase.AwaitingPostRepairSecondInteract;
+                    break;
+
+                case Phase.AwaitingPostRepairSecondInteract:
+                    if (target != null)
+                    {
+                        target.SetActive(true);
+                    }
+
+                    RevealBlueKey();
+
+                    phase = Phase.Completed;
+                    break;
             }
         }
 
-        private static bool InteractorIsHoldingProjectorBulb(GameObject interactor)
+        private bool CanDeliverNextHeldRepairPart(GameObject interactor)
         {
             if (interactor == null)
             {
@@ -89,9 +194,75 @@ namespace StorageEscape.Interaction
             }
 
             PlayerInventory inventory = FindInventory(interactor);
-            return inventory != null
-                && inventory.HeldItem != null
-                && inventory.HeldItem.Id == InventoryItemId.projector_bulb;
+            if (inventory == null || inventory.HeldItem == null)
+            {
+                return false;
+            }
+
+            InventoryItemId held = inventory.HeldItem.Id;
+            if (held == InventoryItemId.projector_bulb)
+            {
+                return !bulbDelivered;
+            }
+
+            if (held == InventoryItemId.record_tape)
+            {
+                return !tapeDelivered;
+            }
+
+            return false;
+        }
+
+        private bool TryConsumeNextRepairPart(PlayerInventory inventory)
+        {
+            if (inventory.HeldItem == null)
+            {
+                return false;
+            }
+
+            InventoryItemId held = inventory.HeldItem.Id;
+
+            if (!bulbDelivered && held == InventoryItemId.projector_bulb)
+            {
+                if (!inventory.TryConsumeHeldItem(InventoryItemId.projector_bulb))
+                {
+                    return false;
+                }
+
+                bulbDelivered = true;
+
+                return true;
+            }
+
+            if (!tapeDelivered && held == InventoryItemId.record_tape)
+            {
+                if (!inventory.TryConsumeHeldItem(InventoryItemId.record_tape))
+                {
+                    return false;
+                }
+
+                if (tapeRecorder != null)
+                {
+                    tapeRecorder.SetActive(true);
+                }
+                tapeDelivered = true;
+                return true;
+            }
+
+            return false;
+        }
+
+        private void RevealBlueKey()
+        {
+            if (blueKey == null)
+            {
+                Debug.LogWarning(
+                    "[Projector] Referencia 'blueKey' sin asignar: no se mostrará la llave azul.",
+                    this);
+                return;
+            }
+
+            blueKey.SetActive(true);
         }
 
         private static PlayerInventory FindInventory(GameObject interactor)
@@ -112,6 +283,16 @@ namespace StorageEscape.Interaction
                     target.SetActive(false);
                 }
 
+                if (tapeRecorder != null)
+                {
+                    tapeRecorder.SetActive(false);
+                }
+                if (tapeRecorderCollider != null)
+                {
+                    tapeRecorderCollider.enabled = true;
+                }
+                bulbDelivered = false;
+                tapeDelivered = false;
                 phase = Phase.AwaitingSecond;
             }
         }

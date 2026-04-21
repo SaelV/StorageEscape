@@ -31,5 +31,6 @@ namespace StorageEscape.Inventory
         key_cyan,
         key_purple,
         projector_bulb,
+        record_tape
     }
 }

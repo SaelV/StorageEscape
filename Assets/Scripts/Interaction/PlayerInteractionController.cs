@@ -84,10 +84,21 @@ namespace StorageEscape.Interaction
             }
 
             GameObject promptRoot = prompText.gameObject;
-            bool shouldShow =
+            bool canInteract =
                 CurrentTarget != null && CurrentTarget.CanInteract(gameObject);
 
-            if (!shouldShow)
+            if (!canInteract)
+            {
+                if (promptRoot.activeSelf)
+                {
+                    promptRoot.SetActive(false);
+                }
+
+                return;
+            }
+
+            string prompt = CurrentTarget.InteractionPrompt ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(prompt))
             {
                 if (promptRoot.activeSelf)
                 {
@@ -102,7 +113,7 @@ namespace StorageEscape.Interaction
                 promptRoot.SetActive(true);
             }
 
-            prompText.text = CurrentTarget.InteractionPrompt ?? string.Empty;
+            prompText.text = prompt;
         }
 
 #if UNITY_EDITOR
