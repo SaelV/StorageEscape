@@ -1,3 +1,4 @@
+using StorageEscape.Audio;
 using UnityEngine;
 
 namespace StorageEscape.Interaction
@@ -37,6 +38,7 @@ namespace StorageEscape.Interaction
         {
             isOn = !isOn;
             ApplyVisualState(isOn);
+            AudioManager.Instance.PlayClip(AudioClipId.BaseInteraction, transform.position);
         }
 
         private void ApplyVisualState(bool on)

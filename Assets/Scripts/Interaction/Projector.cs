@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using StorageEscape.Audio;
 using StorageEscape.Inventory;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -33,6 +34,7 @@ namespace StorageEscape.Interaction
         [SerializeField] private float firstPulseDurationSeconds = 0.2f;
         [SerializeField] private GameObject blueKey;
         [SerializeField] private GameObject tapeRecorder;
+        [SerializeField] private ParticleSystem particleEffect;
         [SerializeField] private Collider tapeRecorderCollider;
 
         [Tooltip("Opcional. Si está vacío, se usa el primer PlayerInventory de la escena (un jugador).")]
@@ -77,6 +79,7 @@ namespace StorageEscape.Interaction
             {
                 target.SetActive(false);
             }
+            particleEffect.Stop();
         }
 
         private PlayerInventory ResolvePlayerInventory()
@@ -136,8 +139,9 @@ namespace StorageEscape.Interaction
                     {
                         target.SetActive(true);
                     }
-
+                    particleEffect.Play();
                     phase = Phase.PulsingFirst;
+                    AudioManager.Instance.PlayClip(AudioClipId.BaseInteraction, transform.position);
                     StartCoroutine(FirstPulseRoutine());
                     break;
 
@@ -148,6 +152,8 @@ namespace StorageEscape.Interaction
                         {
                             break;
                         }
+
+                        AudioManager.Instance.PlayClip(AudioClipId.BaseInteraction, transform.position);
 
                         if (bulbDelivered && tapeDelivered)
                         {
@@ -165,6 +171,7 @@ namespace StorageEscape.Interaction
                     }
 
                 case Phase.AwaitingPostRepairFirstInteract:
+                    AudioManager.Instance.PlayClip(AudioClipId.BaseInteraction, transform.position);
                     if (target != null)
                     {
                         target.SetActive(true);
@@ -174,6 +181,7 @@ namespace StorageEscape.Interaction
                     break;
 
                 case Phase.AwaitingPostRepairSecondInteract:
+                    AudioManager.Instance.PlayClip(AudioClipId.BaseInteraction, transform.position);
                     if (target != null)
                     {
                         target.SetActive(true);
@@ -291,6 +299,8 @@ namespace StorageEscape.Interaction
                 {
                     tapeRecorderCollider.enabled = true;
                 }
+                particleEffect.Stop();
+                AudioManager.Instance.PlayClip(AudioClipId.TapeExplotion, transform.position);
                 bulbDelivered = false;
                 tapeDelivered = false;
                 phase = Phase.AwaitingSecond;

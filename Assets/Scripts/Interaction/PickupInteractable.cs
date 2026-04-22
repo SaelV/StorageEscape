@@ -1,3 +1,4 @@
+using StorageEscape.Audio;
 using StorageEscape.Inventory;
 using UnityEngine;
 
@@ -11,6 +12,7 @@ namespace StorageEscape.Interaction
         [SerializeField] private InventoryItemDefinition item;
         [SerializeField] private string interactionPrompt = "Recoger";
         [SerializeField] private bool destroyRootOnPickup = true;
+        [SerializeField] private AudioClipId pickupSound = AudioClipId.Pickup;
 
         public string InteractionPrompt => interactionPrompt;
 
@@ -45,7 +47,7 @@ namespace StorageEscape.Interaction
             {
                 return;
             }
-
+            AudioManager.Instance.PlayClip(pickupSound, transform.position);
             if (destroyRootOnPickup)
             {
                 Destroy(gameObject);
