@@ -73,3 +73,7 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# >100 MB: GitHub rechaza el blob; no versionar (borrar del índice con git rm --cached si sigue trackeado)
+/Assets/AudioClips/Horror SFX Free/Ambient/Suburban Neighborhood_morning.wav
+/Assets/AudioClips/Horror SFX Free/Ambient/Suburban Neighborhood_morning.wav.meta

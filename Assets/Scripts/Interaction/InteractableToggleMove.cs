@@ -1,3 +1,4 @@
+using StorageEscape.Audio;
 using System.Collections;
 using UnityEngine;
 
@@ -29,6 +30,7 @@ namespace StorageEscape.Interaction
         [Header("Opcional")]
         [Tooltip("Se activa al empezar a abrir y se desactiva al empezar a cerrar.")]
         [SerializeField] private GameObject activeWhenOpening;
+        [SerializeField] private AudioClipId audioClipId = AudioClipId.Switch;
 
         private Vector3 closedWorldPosition;
         private Quaternion closedWorldRotation;
@@ -82,7 +84,7 @@ namespace StorageEscape.Interaction
                 isAtOpenPose = !isAtOpenPose;
                 return;
             }
-
+            AudioManager.Instance.PlayClip(audioClipId, objectToMove.position);
             StartCoroutine(MoveRoutine());
         }
 

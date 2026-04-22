@@ -5718,7 +5718,7 @@ MonoBehaviour:
   item: {fileID: 11400000, guid: f84c3a6d4fea45243b376cd983c170bf, type: 2}
   interactionPrompt: Recoger
   destroyRootOnPickup: 1
-  pickupSound: 3
+  pickupSound: 5
 --- !u!65 &3257995185456281605
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6319,6 +6319,7 @@ MonoBehaviour:
   promptWhenClosed: Abrir
   promptWhenOpen: Cerrar
   activeWhenOpening: {fileID: 3302619640259127891}
+  audioClipId: 9
 --- !u!65 &1977852457671127750
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8319,6 +8320,7 @@ MonoBehaviour:
   promptWhenClosed: Abrir
   promptWhenOpen: Cerrar
   activeWhenOpening: {fileID: 7253414716520923897}
+  audioClipId: 10
 --- !u!65 &6903979304547960796
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -88,6 +89,25 @@ namespace StorageEscape.Audio
         }
 
         /// <summary>
+        /// Asigna clip, volumen y loop desde el catálogo a un <see cref="AudioSource"/> que controles tú (p. ej. pasos en loop del jugador).
+        /// </summary>
+        public bool TryConfigureSourceFromCatalog(AudioClipId id, AudioSource target, bool loop, bool randomizePitch)
+        {
+            if (target == null || !TryGetDef(id, out AudioClipDef def) || def.Clip == null)
+            {
+                return false;
+            }
+
+            target.clip = def.Clip;
+            target.volume = def.Volume;
+            target.loop = loop;
+            target.pitch = randomizePitch ? Random.Range(def.PitchMin, def.PitchMax) : 1f;
+            target.spatialBlend = 1f;
+            target.playOnAwake = false;
+            return true;
+        }
+
+        /// <summary>
         /// Reproduce un clip del catálogo usando el pool de SFX en la posición mundial indicada (audio 3D).
         /// </summary>
         /// <param name="id">Identificador del <see cref="AudioClipDef"/>.</param>
@@ -96,15 +116,59 @@ namespace StorageEscape.Audio
         /// <param name="usePitch">Si es true, aplica pitch aleatorio entre los límites del <see cref="AudioClipDef"/>.</param>
         public void PlayClip(AudioClipId id, Vector3 position, bool loop = false, bool usePitch = false)
         {
-            if (!TryGetDef(id, out AudioClipDef def))
+            if (!TryBeginPooledClip(id, position, loop, usePitch, out AudioSource src))
             {
                 return;
             }
 
-            AudioSource src = AcquirePooledSource();
-            if (src == null)
+            src.Play();
+        }
+
+        /// <summary>
+        /// Reproduce el clip en loop durante <paramref name="durationSeconds"/> y luego lo detiene y libera el emisor del pool.
+        /// </summary>
+        public void PlayClipLoopForDuration(AudioClipId id, Vector3 position, float durationSeconds, bool usePitch = false)
+        {
+            if (durationSeconds <= 0f)
+            {
+                Debug.LogWarning("[AudioManager] PlayClipLoopForDuration: durationSeconds debe ser mayor que 0.");
+                return;
+            }
+
+            if (!TryBeginPooledClip(id, position, loop: true, usePitch, out AudioSource src))
             {
                 return;
+            }
+
+            src.Play();
+            StartCoroutine(StopPooledSourceAfter(src, durationSeconds));
+        }
+
+        private IEnumerator StopPooledSourceAfter(AudioSource src, float durationSeconds)
+        {
+            yield return new WaitForSeconds(durationSeconds);
+            if (src == null)
+            {
+                yield break;
+            }
+
+            src.Stop();
+            src.clip = null;
+            src.loop = false;
+        }
+
+        private bool TryBeginPooledClip(AudioClipId id, Vector3 position, bool loop, bool usePitch, out AudioSource src)
+        {
+            src = null;
+            if (!TryGetDef(id, out AudioClipDef def))
+            {
+                return false;
+            }
+
+            src = AcquirePooledSource();
+            if (src == null)
+            {
+                return false;
             }
 
             src.transform.position = position;
@@ -113,7 +177,7 @@ namespace StorageEscape.Audio
             src.clip = def.Clip;
             src.volume = def.Volume;
             src.pitch = usePitch ? Random.Range(def.PitchMin, def.PitchMax) : 1f;
-            src.Play();
+            return true;
         }
 
         private void BuildDictionary()

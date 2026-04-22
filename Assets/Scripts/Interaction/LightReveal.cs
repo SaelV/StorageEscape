@@ -38,7 +38,7 @@ namespace StorageEscape.Interaction
         {
             isOn = !isOn;
             ApplyVisualState(isOn);
-            AudioManager.Instance.PlayClip(AudioClipId.BaseInteraction, transform.position);
+            AudioManager.Instance.PlayClip(AudioClipId.Switch, transform.position);
         }
 
         private void ApplyVisualState(bool on)

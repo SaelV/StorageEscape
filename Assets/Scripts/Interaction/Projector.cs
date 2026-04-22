@@ -142,6 +142,7 @@ namespace StorageEscape.Interaction
                     particleEffect.Play();
                     phase = Phase.PulsingFirst;
                     AudioManager.Instance.PlayClip(AudioClipId.BaseInteraction, transform.position);
+                    AudioManager.Instance.PlayClipLoopForDuration(AudioClipId.FluorecentLight, transform.position, firstPulseDurationSeconds);
                     StartCoroutine(FirstPulseRoutine());
                     break;
 
@@ -153,7 +154,7 @@ namespace StorageEscape.Interaction
                             break;
                         }
 
-                        AudioManager.Instance.PlayClip(AudioClipId.BaseInteraction, transform.position);
+                        AudioManager.Instance.PlayClip(AudioClipId.FixProjector, transform.position);
 
                         if (bulbDelivered && tapeDelivered)
                         {
@@ -172,25 +173,19 @@ namespace StorageEscape.Interaction
 
                 case Phase.AwaitingPostRepairFirstInteract:
                     AudioManager.Instance.PlayClip(AudioClipId.BaseInteraction, transform.position);
+                    AudioManager.Instance.PlayClip(AudioClipId.FluorecentLight, transform.position, loop: true);
+                    AudioManager.Instance.PlayClip(AudioClipId.Scream, transform.position);
+
                     if (target != null)
                     {
                         target.SetActive(true);
                     }
-
-                    phase = Phase.AwaitingPostRepairSecondInteract;
-                    break;
-
-                case Phase.AwaitingPostRepairSecondInteract:
-                    AudioManager.Instance.PlayClip(AudioClipId.BaseInteraction, transform.position);
-                    if (target != null)
-                    {
-                        target.SetActive(true);
-                    }
-
                     RevealBlueKey();
 
                     phase = Phase.Completed;
                     break;
+
+               
             }
         }
 

@@ -12,6 +12,14 @@ namespace StorageEscape.Audio
         TapeExplotion = 2,
         Pickup = 3,
         BaseInteraction = 4,
+        PickUpKey = 5,
+        Switch = 6,
+        FluorecentLight = 7,
+        Scream = 8,
+        DrawerOpen = 9,
+        DoorCabinetOpen = 10,
+        FixProjector = 11,
+        PlayerWalking = 12,
     }
 
     /// <summary>

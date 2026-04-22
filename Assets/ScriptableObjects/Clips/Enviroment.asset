@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StorageEscape.Audio.AudioClipDef
   id: 1
   clip: {fileID: 8300000, guid: 52017ab0c0bc8f14fbbada63458038b3, type: 3}
-  volume: 1
+  volume: 0.657
   pitchMin: 0.95
   pitchMax: 1.05
