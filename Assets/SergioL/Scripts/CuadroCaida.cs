@@ -6,6 +6,7 @@ public class CuadroCaida : MonoBehaviour, IInteractable
 {
     private Rigidbody rb;
     private bool yaSeCayo = false;
+    public GameObject targetKey;
 
     public string InteractionPrompt => "Tirar cuadro";
 
@@ -16,6 +17,7 @@ public class CuadroCaida : MonoBehaviour, IInteractable
         {
             rb.isKinematic = true;
         }
+        if (targetKey) targetKey.SetActive(false);
     }
 
     public bool CanInteract(GameObject interactor)
@@ -34,7 +36,8 @@ public class CuadroCaida : MonoBehaviour, IInteractable
         {
             yaSeCayo = true;
             rb.isKinematic = false; // Activa la gravedad
-            
+            if (targetKey) targetKey.SetActive(true);
+
             StartCoroutine(DesaparecerDespuesDeTiempo(5f));
             
             Debug.Log("El cuadro está cayendo...");
@@ -43,7 +46,9 @@ public class CuadroCaida : MonoBehaviour, IInteractable
 
     private IEnumerator DesaparecerDespuesDeTiempo(float tiempo)
     {
+
         yield return new WaitForSeconds(tiempo);
+        
         gameObject.SetActive(false);
         Debug.Log("El cuadro ha desaparecido después de 5 segundos.");
     }

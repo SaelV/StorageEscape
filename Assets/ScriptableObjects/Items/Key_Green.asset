@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ab043a68c1c9287498c6881fb2fc03e4, type: 3}
-  m_Name: Key_Blue 1
+  m_Name: Key_Green
   m_EditorClassIdentifier: Assembly-CSharp::StorageEscape.Inventory.InventoryItemDefinition
   id: 3
   displayName: Key Green
-  icon: {fileID: 21300000, guid: 271ed95940e731f428772b3e59f1762a, type: 3}
+  icon: {fileID: 21300000, guid: 4ce624dbf69c32e42947e6f1861eb188, type: 3}
   heldViewPrefab: {fileID: 0}
