@@ -36,7 +36,7 @@ public class AdvancedFlicker_NoUpdate : MonoBehaviour
 
     IEnumerator FlickerLight(Light l)
     {
-        while (true)
+        while (targetObject != null)
         {
             // Wait random time
             yield return new WaitForSeconds(Random.Range(minFlickerTime, maxFlickerTime));
@@ -57,15 +57,17 @@ public class AdvancedFlicker_NoUpdate : MonoBehaviour
                 yield return null;
             }
         }
+
+        l.intensity = Mathf.Lerp(l.intensity, 3, 0.3f);
     }
 
     IEnumerator ObjectRoutine()
     {
-        while (true)
+        while (targetObject != null)
         {
             yield return new WaitForSeconds(Random.Range(2f, 5f));
 
-            if (Random.value < objectToggleChance)
+            if (Random.value < objectToggleChance && targetObject)
             {
                 targetObject.SetActive(!targetObject.activeSelf);
             }
