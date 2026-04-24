@@ -21,14 +21,11 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: TVTEX_Screen_Metallic
-  m_Shader: {fileID: -6465566751694194690, guid: 71338ba36cbc4dc478d812869c4d7d80, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 3f5f899ea439b42dda17cf6ac74776bb, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
-  m_InvalidKeywords:
-  - _DISABLE_SSR_TRANSPARENT
-  - _EMISSION
-  - _NORMALMAP_TANGENT_SPACE
+  m_InvalidKeywords: []
   m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
