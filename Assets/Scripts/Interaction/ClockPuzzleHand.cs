@@ -15,13 +15,19 @@ namespace StorageEscape.Puzzles
 
         [Header("Highlight")]
         [SerializeField] private Renderer targetRenderer;
-        [SerializeField] private Color normalColor = Color.white;
-        [SerializeField] private Color selectedColor = Color.yellow;
+
+        [Tooltip("Material normal de la manecilla.")]
+        [SerializeField] private Material normalMaterial;
+
+        [Tooltip("Material visible cuando la manecilla está seleccionada. Recomiendo uno amarillo/emissive.")]
+        [SerializeField] private Material selectedMaterial;
+
+        [Tooltip("Opcional: objeto extra de highlight, como una copia amarilla o un outline.")]
+        [SerializeField] private GameObject highlightObject;
 
         [Header("Audio")]
         [SerializeField] private AudioClipId rotateSound = AudioClipId.None;
 
-        private MaterialPropertyBlock propertyBlock;
         private bool locked;
 
         public bool IsCorrect => currentHour == correctHour;
@@ -33,7 +39,11 @@ namespace StorageEscape.Puzzles
                 targetRenderer = GetComponentInChildren<Renderer>();
             }
 
-            propertyBlock = new MaterialPropertyBlock();
+            if (targetRenderer != null && normalMaterial == null)
+            {
+                normalMaterial = targetRenderer.sharedMaterial;
+            }
+
             SetSelected(false);
         }
 
@@ -71,17 +81,22 @@ namespace StorageEscape.Puzzles
 
         public void SetSelected(bool selected)
         {
-            if (targetRenderer == null)
-                return;
+            if (targetRenderer != null)
+            {
+                if (selected && selectedMaterial != null)
+                {
+                    targetRenderer.material = selectedMaterial;
+                }
+                else if (!selected && normalMaterial != null)
+                {
+                    targetRenderer.material = normalMaterial;
+                }
+            }
 
-            targetRenderer.GetPropertyBlock(propertyBlock);
-
-            Color color = selected ? selectedColor : normalColor;
-
-            propertyBlock.SetColor("_BaseColor", color);
-            propertyBlock.SetColor("_Color", color);
-
-            targetRenderer.SetPropertyBlock(propertyBlock);
+            if (highlightObject != null)
+            {
+                highlightObject.SetActive(selected);
+            }
         }
 
         public void Lock()

@@ -6930,6 +6930,11 @@ Transform:
   - {fileID: 1648002392}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1116191749 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9156347143994207885, guid: c82236c16aae9d34fbd437f8dea6e2c9, type: 3}
+  m_PrefabInstance: {fileID: 579173069}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1126741161
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8975,6 +8980,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5042783144067677285, guid: 9e86496727575fe4db591138e85872b4, type: 3}
   m_PrefabInstance: {fileID: 1382827219}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1385517045 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9156347144040445544, guid: c82236c16aae9d34fbd437f8dea6e2c9, type: 3}
+  m_PrefabInstance: {fileID: 579173069}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2922308556bc98e4898cb3309250e781, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1408317733
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10636,26 +10652,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1099037249}
     m_Modifications:
-    - target: {fileID: 445207808558448295, guid: 5369ce58b2e950b4490ca2f007feaa93, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -1.67
-      objectReference: {fileID: 0}
-    - target: {fileID: 680808214683324285, guid: 5369ce58b2e950b4490ca2f007feaa93, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 948542834784956972, guid: 5369ce58b2e950b4490ca2f007feaa93, type: 3}
       propertyPath: m_Name
       value: GreenRoom
       objectReference: {fileID: 0}
-    - target: {fileID: 948542834784956972, guid: 5369ce58b2e950b4490ca2f007feaa93, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2066201090122003680, guid: 5369ce58b2e950b4490ca2f007feaa93, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 8.787
-      objectReference: {fileID: 0}
+    - target: {fileID: 3155549948189740111, guid: 5369ce58b2e950b4490ca2f007feaa93, type: 3}
+      propertyPath: cameraTransform
+      value: 
+      objectReference: {fileID: 1116191749}
+    - target: {fileID: 3155549948189740111, guid: 5369ce58b2e950b4490ca2f007feaa93, type: 3}
+      propertyPath: 'scriptsToDisableWhileUsingClock.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1385517045}
     - target: {fileID: 5669808226079114068, guid: 5369ce58b2e950b4490ca2f007feaa93, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -10696,17 +10704,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6320946901043973934, guid: 5369ce58b2e950b4490ca2f007feaa93, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6320946901043973934, guid: 5369ce58b2e950b4490ca2f007feaa93, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1648002399}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5369ce58b2e950b4490ca2f007feaa93, type: 3}
 --- !u!4 &1648002392 stripped
 Transform:
@@ -10718,27 +10719,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 6320946901043973934, guid: 5369ce58b2e950b4490ca2f007feaa93, type: 3}
   m_PrefabInstance: {fileID: 1648002391}
   m_PrefabAsset: {fileID: 0}
---- !u!65 &1648002399
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1648002393}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.54817826, y: 0.73284036, z: 0.49946013}
-  m_Center: {x: 0.07943901, y: 0.36167186, z: 0.010582791}
 --- !u!1001 &1659436343
 PrefabInstance:
   m_ObjectHideFlags: 0

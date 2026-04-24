@@ -20,6 +20,8 @@ namespace StorageEscape.Audio
         DoorCabinetOpen = 10,
         FixProjector = 11,
         PlayerWalking = 12,
+        InstallingClockHand = 13,
+        RotatingClockHand = 14,
     }
 
     /// <summary>

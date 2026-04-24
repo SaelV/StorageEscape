@@ -57,5 +57,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: bad26c057654e9645a52caf1448202f3, type: 2}
   - {fileID: 11400000, guid: 43f07c0ab2d79e84d87627a92279f1a3, type: 2}
   - {fileID: 11400000, guid: 304163c04dbeacd40a5231a0e883a5a8, type: 2}
+  - {fileID: 11400000, guid: 9654502584bf4ab4c9701e293feda523, type: 2}
+  - {fileID: 11400000, guid: 3dcbe8ec3f5121b4ba714a5113ed2917, type: 2}
   poolInitialSize: 8
   poolRoot: {fileID: 1208218767264523537}

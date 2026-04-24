@@ -20,6 +20,17 @@ namespace StorageEscape.Puzzles
         [Tooltip("El minutero debe estar apagado al inicio. Se activa al usar el ítem.")]
         [SerializeField] private ClockPuzzleHand minuteHand;
 
+        [Header("Cámara de inspección")]
+        [SerializeField] private Transform cameraTransform;
+
+        [Tooltip("Punto final donde quedará la cámara al usar el reloj.")]
+        [SerializeField] private Transform cameraFocusPoint;
+
+        [SerializeField] private float cameraMoveSpeed = 6f;
+
+        [Tooltip("Arrastra aquí los scripts de movimiento y cámara del jugador para apagarlos mientras usa el reloj.")]
+        [SerializeField] private MonoBehaviour[] scriptsToDisableWhileUsingClock;
+
         [Header("UI Mensajes")]
         [SerializeField] private TextMeshProUGUI messageText;
         [SerializeField] private float messageDuration = 2f;
@@ -44,6 +55,10 @@ namespace StorageEscape.Puzzles
         [SerializeField] private Vector3 openOffset = new Vector3(0f, -1f, 0f);
         [SerializeField] private float openSpeed = 2f;
 
+        [Header("Llave dentro del compartimiento")]
+        [Tooltip("La llave que está dentro del drawer. Se oculta al inicio y aparece cuando el compartimiento termina de abrir.")]
+        [SerializeField] private GameObject keyInsideDrawer;
+
         [Header("Audio")]
         [SerializeField] private AudioClipId installHandSound = AudioClipId.None;
         [SerializeField] private AudioClipId successSound = AudioClipId.None;
@@ -59,12 +74,17 @@ namespace StorageEscape.Puzzles
         private bool puzzleActive;
         private bool puzzleSolved;
         private bool opening;
+        private bool keyRevealed;
 
         private int selectedHandIndex;
         private Coroutine messageRoutine;
+        private Coroutine cameraRoutine;
 
         private Vector3 closedPosition;
         private Vector3 openPosition;
+
+        private Vector3 originalCameraPosition;
+        private Quaternion originalCameraRotation;
 
         private void Start()
         {
@@ -73,6 +93,11 @@ namespace StorageEscape.Puzzles
                 hourHand,
                 minuteHand
             };
+
+            if (cameraTransform == null && Camera.main != null)
+            {
+                cameraTransform = Camera.main.transform;
+            }
 
             if (hourHand != null)
             {
@@ -101,6 +126,11 @@ namespace StorageEscape.Puzzles
             {
                 closedPosition = compartmentDoor.position;
                 openPosition = closedPosition + openOffset;
+            }
+
+            if (keyInsideDrawer != null)
+            {
+                keyInsideDrawer.SetActive(false);
             }
 
             ClearSelection();
@@ -159,8 +189,6 @@ namespace StorageEscape.Puzzles
 
         public void Interact(GameObject interactor)
         {
-            Debug.Log("Interactuando con el reloj.");
-
             if (puzzleSolved)
                 return;
 
@@ -222,6 +250,16 @@ namespace StorageEscape.Puzzles
 
             puzzleActive = true;
 
+            DisablePlayerControlScripts();
+
+            if (cameraTransform != null)
+            {
+                originalCameraPosition = cameraTransform.position;
+                originalCameraRotation = cameraTransform.rotation;
+            }
+
+            MoveCameraToFocusPoint();
+
             if (controlsHudText != null)
             {
                 controlsHudText.text = controlsMessage;
@@ -242,7 +280,87 @@ namespace StorageEscape.Puzzles
                 controlsHudText.gameObject.SetActive(false);
             }
 
+            StartReturnCameraAndEnablePlayer();
+
             ShowMessage("Dejaste de usar el reloj.");
+        }
+
+        private void DisablePlayerControlScripts()
+        {
+            for (int i = 0; i < scriptsToDisableWhileUsingClock.Length; i++)
+            {
+                if (scriptsToDisableWhileUsingClock[i] != null)
+                {
+                    scriptsToDisableWhileUsingClock[i].enabled = false;
+                }
+            }
+        }
+
+        private void EnablePlayerControlScripts()
+        {
+            for (int i = 0; i < scriptsToDisableWhileUsingClock.Length; i++)
+            {
+                if (scriptsToDisableWhileUsingClock[i] != null)
+                {
+                    scriptsToDisableWhileUsingClock[i].enabled = true;
+                }
+            }
+        }
+
+        private void MoveCameraToFocusPoint()
+        {
+            if (cameraTransform == null || cameraFocusPoint == null)
+                return;
+
+            if (cameraRoutine != null)
+            {
+                StopCoroutine(cameraRoutine);
+            }
+
+            cameraRoutine = StartCoroutine(MoveCameraRoutine(
+                cameraFocusPoint.position,
+                cameraFocusPoint.rotation
+            ));
+        }
+
+        private void MoveCameraBack()
+        {
+            if (cameraTransform == null)
+                return;
+
+            if (cameraRoutine != null)
+            {
+                StopCoroutine(cameraRoutine);
+            }
+
+            cameraRoutine = StartCoroutine(MoveCameraRoutine(
+                originalCameraPosition,
+                originalCameraRotation
+            ));
+        }
+
+        private IEnumerator MoveCameraRoutine(Vector3 targetPosition, Quaternion targetRotation)
+        {
+            while (Vector3.Distance(cameraTransform.position, targetPosition) > 0.01f ||
+                Quaternion.Angle(cameraTransform.rotation, targetRotation) > 0.5f)
+            {
+                cameraTransform.position = Vector3.Lerp(
+                    cameraTransform.position,
+                    targetPosition,
+                    Time.deltaTime * cameraMoveSpeed
+                );
+
+                cameraTransform.rotation = Quaternion.Slerp(
+                    cameraTransform.rotation,
+                    targetRotation,
+                    Time.deltaTime * cameraMoveSpeed
+                );
+
+                yield return null;
+            }
+
+            cameraTransform.position = targetPosition;
+            cameraTransform.rotation = targetRotation;
         }
 
         private void SelectPreviousHand()
@@ -361,6 +479,8 @@ namespace StorageEscape.Puzzles
                 minuteHand.Lock();
             }
 
+            StartReturnCameraAndEnablePlayer();
+
             if (successSound != AudioClipId.None && AudioManager.Instance != null)
             {
                 AudioManager.Instance.PlayClip(successSound, transform.position, false, false);
@@ -384,6 +504,21 @@ namespace StorageEscape.Puzzles
             {
                 compartmentDoor.position = openPosition;
                 opening = false;
+
+                RevealKeyInsideDrawer();
+            }
+        }
+
+        private void RevealKeyInsideDrawer()
+        {
+            if (keyRevealed)
+                return;
+
+            keyRevealed = true;
+
+            if (keyInsideDrawer != null)
+            {
+                keyInsideDrawer.SetActive(true);
             }
         }
 
@@ -421,6 +556,28 @@ namespace StorageEscape.Puzzles
             return interactor.GetComponent<PlayerInventory>()
                 ?? interactor.GetComponentInParent<PlayerInventory>()
                 ?? interactor.GetComponentInChildren<PlayerInventory>();
+        }
+        private void StartReturnCameraAndEnablePlayer()
+        {
+            if (cameraRoutine != null)
+            {
+                StopCoroutine(cameraRoutine);
+            }
+
+            cameraRoutine = StartCoroutine(ReturnCameraAndEnablePlayerRoutine());
+        }
+
+        private IEnumerator ReturnCameraAndEnablePlayerRoutine()
+        {
+            if (cameraTransform != null)
+            {
+                yield return MoveCameraRoutine(
+                    originalCameraPosition,
+                    originalCameraRotation
+                );
+            }
+
+            EnablePlayerControlScripts();
         }
     }
 }
