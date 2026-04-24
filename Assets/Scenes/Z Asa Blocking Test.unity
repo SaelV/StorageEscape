@@ -41124,6 +41124,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 484333351714601429, guid: 5e382e5a6da6916418706be72cd34db3, type: 3}
+      propertyPath: objectToggleChance
+      value: 0.9
+      objectReference: {fileID: 0}
     - target: {fileID: 5035068449967428922, guid: 5e382e5a6da6916418706be72cd34db3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

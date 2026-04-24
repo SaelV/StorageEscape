@@ -32,6 +32,7 @@ namespace EasyPeasyFirstPersonController
         private float currentTilt;
         private float tiltVelocity;
 
+
         public PlayerBaseState CurrentState { get => currentState; set => currentState = value; }
 
         [Header("Visual Settings")]
@@ -82,6 +83,12 @@ namespace EasyPeasyFirstPersonController
         [Header("Debug")]
         public bool currentStateDebug = true;
 
+        [Header("Ladder Settings")]
+        public float ladderClimbSpeed = 3f;
+        public LayerMask ladderMask;
+
+        [HideInInspector] public bool isOnLadder;
+
         void OnGUI()
         {
             if (currentState != null && Application.isEditor && currentStateDebug)
@@ -112,7 +119,15 @@ namespace EasyPeasyFirstPersonController
         {
             isGrounded = Physics.CheckSphere(groundCheck.position, 0.2f, groundMask, QueryTriggerInteraction.Ignore);
 
-            currentState.UpdateState();
+            if (isOnLadder)
+            {
+                HandleLadderMovement();
+            }
+            else
+            {
+                currentState.UpdateState();
+            }
+
             HandleRotation();
             UpdateVisuals();
         }
@@ -194,6 +209,11 @@ namespace EasyPeasyFirstPersonController
             {
                 isInWater = true;
             }
+
+            if (((1 << other.gameObject.layer) & ladderMask) != 0)
+            {
+                isOnLadder = true;
+            }
         }
 
         private void OnTriggerExit(Collider other)
@@ -202,6 +222,33 @@ namespace EasyPeasyFirstPersonController
             {
                 isInWater = false;
             }
+
+            if (((1 << other.gameObject.layer) & ladderMask) != 0)
+            {
+                isOnLadder = false;
+            }
+        }
+
+
+
+        public void HandleLadderMovement()
+        {
+            if (!isOnLadder)
+                return;
+
+            float verticalInput = input.moveInput.y;
+
+            Vector3 ladderMove = Vector3.up * verticalInput * ladderClimbSpeed;
+
+            //allow slight left/right movement while on ladder
+            Vector3 sideMove = transform.right * input.moveInput.x * walkSpeed * 0.4f;
+
+            moveDirection = ladderMove + sideMove;
+
+            characterController.Move(moveDirection * Time.deltaTime);
+
+            // Prevent gravity from pulling the player down while climbing
+            moveDirection.y = 0f;
         }
 
     }
