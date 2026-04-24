@@ -33,6 +33,7 @@ namespace StorageEscape.Interaction
         [SerializeField] private GameObject target;
         [SerializeField] private float firstPulseDurationSeconds = 0.2f;
         [SerializeField] private GameObject blueKey;
+        [SerializeField] private GameObject clock_hand;
         [SerializeField] private GameObject tapeRecorder;
         [SerializeField] private ParticleSystem particleEffect;
         [SerializeField] private Collider tapeRecorderCollider;
@@ -266,6 +267,7 @@ namespace StorageEscape.Interaction
             }
 
             blueKey.SetActive(true);
+            clock_hand.SetActive(true);
         }
 
         private static PlayerInventory FindInventory(GameObject interactor)
