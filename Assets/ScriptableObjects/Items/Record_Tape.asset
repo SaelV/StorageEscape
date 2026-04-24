@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StorageEscape.Inventory.InventoryItemDefinition
   id: 7
   displayName: Record Tape
-  icon: {fileID: 21300000, guid: 09f502b1047044c4282b7dc5595a62cb, type: 3}
+  icon: {fileID: 21300000, guid: 713edc4773fa2654f9bc18527d1069b6, type: 3}
   heldViewPrefab: {fileID: 0}

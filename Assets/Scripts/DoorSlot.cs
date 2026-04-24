@@ -1,3 +1,4 @@
+using StorageEscape.Audio;
 using StorageEscape.Interaction;
 using StorageEscape.Inventory;
 using UnityEngine;
@@ -17,6 +18,8 @@ public class DoorSlot : MonoBehaviour, IInteractable
     [SerializeField] private InventoryItemId correctKey = InventoryItemId.undefined;
 
     [SerializeField] private string interactionPrompt = "Colocar llave";
+
+    [SerializeField] private AudioClipId placeKeySound = AudioClipId.PickUpKey;
 
     private GameObject placedVisual;
     private bool keyPlaced;
@@ -79,6 +82,12 @@ public class DoorSlot : MonoBehaviour, IInteractable
         placedKeyId = correctKey;
 
         SpawnPlacedVisual(held);
+
+        if (AudioManager.Instance != null && placeKeySound != AudioClipId.None)
+        {
+            AudioManager.Instance.PlayClip(placeKeySound, placementAnchor.position);
+        }
+
         SlotStateChanged?.Invoke(this);
     }
 

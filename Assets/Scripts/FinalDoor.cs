@@ -1,12 +1,15 @@
 using System;
+using System.Collections;
 using StorageEscape.Inventory;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 
 /// <summary>
 /// Puerta final con cuatro <see cref="DoorSlot"/> (llaves azul, roja, verde y morada — <see cref="InventoryItemId.key_purple"/>).
-/// Cuando en todas la llave colocada es la correcta (<see cref="DoorSlot.IsCorrect"/>), dispara <see cref="onAllKeysPlaced"/>.
+/// Cuando en todas la llave colocada es la correcta (<see cref="DoorSlot.IsCorrect"/>), dispara <see cref="onAllKeysPlaced"/>
+/// y, tras un retraso, carga la escena del menú principal.
 /// </summary>
 public class FinalDoor : MonoBehaviour
 {
@@ -22,6 +25,10 @@ public class FinalDoor : MonoBehaviour
     private GameObject placedKeyPrefabPurple;
 
     [SerializeField] private UnityEvent onAllKeysPlaced;
+
+    [Header("Tras completar puzzle")]
+    [SerializeField, Min(0f)] private float delayBeforeMainMenuSeconds = 5f;
+    [SerializeField] private string mainMenuSceneName = "MainMenu";
 
     private bool hasRaisedComplete;
 
@@ -106,6 +113,20 @@ public class FinalDoor : MonoBehaviour
             hasRaisedComplete = true;
             onAllKeysPlaced?.Invoke();
             OnAllKeysPlaced?.Invoke();
+            StartCoroutine(LoadMainMenuAfterDelay());
+        }
+    }
+
+    private IEnumerator LoadMainMenuAfterDelay()
+    {
+        if (delayBeforeMainMenuSeconds > 0f)
+        {
+            yield return new WaitForSeconds(delayBeforeMainMenuSeconds);
+        }
+
+        if (!string.IsNullOrWhiteSpace(mainMenuSceneName))
+        {
+            SceneManager.LoadScene(mainMenuSceneName);
         }
     }
 

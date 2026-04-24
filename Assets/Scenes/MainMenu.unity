@@ -2291,7 +2291,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cac43c5f00f5e8d44b8ca46b757b9669, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuController
-  gameSceneName: MainMenu
+  gameSceneName: MainScene
 --- !u!4 &442027703
 Transform:
   m_ObjectHideFlags: 0
@@ -7653,6 +7653,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1945443421}
+  - component: {fileID: 1945443422}
   m_Layer: 0
   m_Name: piso 2
   m_TagString: Untagged
@@ -7697,6 +7698,14 @@ Transform:
   - {fileID: 1162142611}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!81 &1945443422
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1945443420}
+  m_Enabled: 1
 --- !u!1 &1958569096
 GameObject:
   m_ObjectHideFlags: 0
