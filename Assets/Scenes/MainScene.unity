@@ -3781,13 +3781,25 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ladder_A
       objectReference: {fileID: 0}
+    - target: {fileID: 4779021863926589715, guid: b2f6995147c73a8478520f668eeda380, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420375211611219115, guid: b2f6995147c73a8478520f668eeda380, type: 3}
+      propertyPath: m_Convex
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420375211611219115, guid: b2f6995147c73a8478520f668eeda380, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5845950813627085010, guid: b2f6995147c73a8478520f668eeda380, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.47263002
+      value: 0.574
       objectReference: {fileID: 0}
     - target: {fileID: 5845950813627085010, guid: b2f6995147c73a8478520f668eeda380, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.7413
+      value: -2.303
       objectReference: {fileID: 0}
     - target: {fileID: 5845950813627085010, guid: b2f6995147c73a8478520f668eeda380, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4181,6 +4193,10 @@ PrefabInstance:
       propertyPath: prompText
       value: 
       objectReference: {fileID: 2145929042}
+    - target: {fileID: 9156347144040445544, guid: c82236c16aae9d34fbd437f8dea6e2c9, type: 3}
+      propertyPath: ladderMask.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
     - target: {fileID: 9156347144040445546, guid: c82236c16aae9d34fbd437f8dea6e2c9, type: 3}
       propertyPath: m_LocalScale.y
       value: 0.75
@@ -7617,7 +7633,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1236176974
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11448,9 +11464,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -6.767
       objectReference: {fileID: 0}
+    - target: {fileID: 3799413273389911912, guid: 302aa2e3cb6558049ba5172d84b87aec, type: 3}
+      propertyPath: m_Convex
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3799413273389911912, guid: 302aa2e3cb6558049ba5172d84b87aec, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4012527151959697824, guid: 302aa2e3cb6558049ba5172d84b87aec, type: 3}
       propertyPath: m_Name
       value: Ladder_B
+      objectReference: {fileID: 0}
+    - target: {fileID: 4012527151959697824, guid: 302aa2e3cb6558049ba5172d84b87aec, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
